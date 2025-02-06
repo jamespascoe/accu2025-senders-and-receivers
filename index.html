@@ -1,0 +1,188 @@
+<!doctype html>
+<html>
+  <head>
+    <meta charset="utf-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=no">
+
+    <title>Advanced Usage of the C++23 Stacktrace Library</title>
+
+    <link rel="shortcut icon" type="image/x-icon" href="favicon.ico?">
+
+    <link rel="stylesheet" href="dist/reset.css">
+    <link rel="stylesheet" href="dist/reveal.css">
+    <link rel="stylesheet" href="dist/theme/league.css" id="theme">
+
+    <!-- Theme used for syntax highlighted code -->
+    <link rel="stylesheet" href="plugin/highlight/github.css" id="highlight-theme">
+
+  </head>
+  <body>
+    <div class="reveal">
+      <div class="slides">
+
+        <section id="Title-Slide"
+                 data-state="hideControls"
+                 data-menu-title="Title Slide"
+                 data-background-image="media/title-slide.png"
+                 data-background-size="contain">
+        </section>
+
+        <section data-menu-title="Overview">
+          <h2>Getting Started with<br>Senders and Receivers</h2>
+            <p>
+            <h4>(What They Are and How to Use Them)</h4>
+            <small>
+              Jim (James) Pascoe<br>
+              <a href="http://www.james-pascoe.com">http://www.james-pascoe.com</a><br>
+              <a href="mailto:james@james-pascoe.com">james@james-pascoe.com</a><p>
+
+              <a href="http://jamespascoe.github.io/accu2025-senders-and-receivers">http://jamespascoe.github.io/accu2025-senders-and-receivers</a>
+              <a href="https://github.com/jamespascoe/accu2025-example-code">https://github.com/jamespascoe/accu2025-example-code</a>
+              <p>
+              <font style="color:yellow">ACCU Bristol and Bath Meetup Coordinator</font>
+            </small>
+          <aside class="notes">
+          <small>
+          Hello, good afternoon and welcome - my name is Jim Pascoe and today I am going to talk to you about Stacktraces and
+          in particular, stacktraces in C++. I am going to talk mainly about the C++23 Stacktrace library and how you can use
+          it in interesting ways, but I am also going to discuss some complementary libraries that you may not be aware of.
+          So, there are two goals for my talk, firstly to show how Stacktraces can be used for more than just debugging logical
+          errors and secondly, to share some libraries and insights that I have found useful.
+          <p>
+          Here is my email address and URL (if you want to find out a bit about what I've done in the past) and also, this
+          is the link to the online talk, so you can follow along from the comfort of your own browser if you prefer. The
+          slides are written using Reveal.js, so you can use the hamburger icon to skip between the slides and select a light
+          theme if you prefer.
+          <p>
+          This is a link to the example code that accompanies the presentation. Along with the C++ is some CMake, so it should be
+          straightforward to build the code on most modern platforms,
+          </small>
+          </aside>
+        </section>
+
+        <section>
+          <h2>Questions?</h2>
+          <p><p>
+          <a href="http://www.james-pascoe.com">http://www.james-pascoe.com</a><br>
+          <a href="mailto:james@james-pascoe.com">james@james-pascoe.com</a><p>
+
+          <small>
+          <a href="http://jamespascoe.github.io/accu2025-senders-and-receivers">http://jamespascoe.github.io/accu2025-senders-and-receivers</a><br>
+          <a href="https://github.com/jamespascoe/accu2025-example-code">https://github.com/jamespascoe/accu2025-example-code</a>
+          </small>
+          <p>
+          <font style="color:yellow">ACCU Bristol and Bath Meetup Coordinator</font>
+        </section>
+
+        </section>
+      </div>
+    </div>
+
+    <script src="dist/reveal.js"></script>
+    <script src="plugin/notes/notes.js"></script>
+    <script src="plugin/markdown/markdown.js"></script>
+    <script src="plugin/highlight/highlight.js"></script>
+    <script src="plugin/menu/menu.js"></script>
+    <script src="plugin/chart/Chart.min.js"></script>
+    <script src="plugin/chart/plugin.js"></script>
+    <script src="plugin/animated/revealjs-animated.js"></script>
+    <script>
+      // More info about initialization & config:
+      // - https://revealjs.com/initialization/
+      // - https://revealjs.com/config/
+      Reveal.initialize({
+        hash: true,
+        controls: true,
+        totalTime: 1200,
+        hideInactiveCursor: true,
+        hideCursorTime: 2000,
+        hideAddressBar: true,
+        preloadIframes: true,
+        progress: false,
+        touch: true,
+        pdfMaxPagesPerSlide: 1,
+        keyboard: {
+          67: () => { /* Keycode for the letter 'c' i.e. 'controls' */
+            var currentSlide = Reveal.getCurrentSlide();
+            var currentVideo = currentSlide.slideBackgroundContentElement.getElementsByTagName("video")[0];
+            if (currentVideo) {
+              /* Toggle video controls on/off */
+              currentVideo.controls = !currentVideo.controls
+            }
+          },
+          32: () => { /* Keycode for spacebar */
+            var currentSlide = Reveal.getCurrentSlide();
+            var currentVideo = currentSlide.slideBackgroundContentElement.getElementsByTagName("video")[0];
+            if (currentVideo) {
+              /* Pause/resume video when the spacebar is pressed */
+              if (currentVideo.paused == true) currentVideo.play();
+              else currentVideo.pause();
+            }
+            else {
+              /* Advance to next slide if no video (default Reveal behaviour) */
+              Reveal.next();
+            }
+          }
+        },
+        chart: {
+          defaults: {
+            global: {
+              title: { fontColor: "#FFF" },
+              legend: {
+                position: "bottom",
+                labels: { fontColor: "#FFF" },
+              },
+              tooltips: {
+                labels: { fontColor: "#FFF" },
+              },
+            },
+            scale: {
+              scaleLabel: { fontColor: "#FFF" },
+              gridLines: { color: "#FFF", zeroLineColor: "#FFF" },
+              ticks: { fontColor: "#FFF" },
+            }
+          },
+          bar: { backgroundColor: [ "rgba(20,220,220,.8)" , "rgba(220,120,120,.8)", "rgba(20,120,220,.8)", "rgba(255, 159, 64, .8)","rgba(255, 205, 86, .8)", "rgba(153, 102, 255, .8)" ]},
+        },
+        menu: {
+          themes: true,
+          delayInit: true
+        },
+        pdfSeparateFragments: false,
+        // Learn about plugins: https://revealjs.com/plugins/
+        plugins: [ RevealMarkdown, RevealHighlight, RevealNotes, RevealMenu, RevealChart ]
+      });
+
+      Reveal.addEventListener('hideControls', function() {
+        Reveal.configure({controls: false});
+        menu_button = document.getElementsByClassName("slide-menu-button")[0];
+        if (menu_button) {
+          menu_button.style.display = 'none';
+        }
+      }, false );
+
+      Reveal.addEventListener('slidechanged', function() {
+        /* Ensure that the Reveal controls and Menu are available on
+         * all slides other than the 'Title-Slide'.
+         */
+        slide_id = Reveal.getCurrentSlide().getAttribute("id");
+
+        if (slide_id !== "Title-Slide" && slide_id !== "video") {
+          config = Reveal.getConfig();
+          if (config["controls"] !== true) {
+            Reveal.configure({controls: true});
+          }
+
+          menu = Reveal.getPlugin("menu");
+          if (!menu.isMenuInitialised()) {
+            menu.initialiseMenu();
+          }
+          menu_button = document.getElementsByClassName("slide-menu-button")[0];
+          if (menu_button) {
+            menu_button.style.display = '';
+          }
+        }
+      }, false );
+   </script>
+  </body>
+</html>
