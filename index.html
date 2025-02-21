@@ -30,7 +30,7 @@
         <section data-menu-title="Overview">
           <h2>Getting Started with<br>Senders and Receivers</h2>
             <p>
-            <h4>(What They Are and How to Use Them)</h4>
+            <h4>(An Introduction and Primer in 20 Minutes)</h4>
             <small>
               Jim (James) Pascoe<br>
               <a href="http://www.james-pascoe.com">http://www.james-pascoe.com</a><br>
@@ -43,11 +43,7 @@
             </small>
           <aside class="notes">
           <small>
-          Hello, good afternoon and welcome - my name is Jim Pascoe and today I am going to talk to you about Stacktraces and
-          in particular, stacktraces in C++. I am going to talk mainly about the C++23 Stacktrace library and how you can use
-          it in interesting ways, but I am also going to discuss some complementary libraries that you may not be aware of.
-          So, there are two goals for my talk, firstly to show how Stacktraces can be used for more than just debugging logical
-          errors and secondly, to share some libraries and insights that I have found useful.
+          Hello, good afternoon and welcome - my name is Jim Pascoe and today I am going to talk to you about Senders and Receivers.
           <p>
           Here is my email address and URL (if you want to find out a bit about what I've done in the past) and also, this
           is the link to the online talk, so you can follow along from the comfort of your own browser if you prefer. The
@@ -58,6 +54,27 @@
           straightforward to build the code on most modern platforms,
           </small>
           </aside>
+        </section>
+
+        <section>
+          <h3 style="color:yellow">Senders and Receivers</h3>
+          <ul>
+            <span class="fragment"><li>Standardised asynchronous programming</li></span>
+            <ul>
+              <span class="fragment"><li><font style="color:yellow">Composability</font> between libraries</li></span>
+              <span class="fragment"><li>network
+                  <span class="fragment"> &#x2192; thread pool</span>
+                  <span class="fragment"> &#x2192; embedded io</span></li>
+              </span>
+              <span class="fragment"><li>no 'glue' code</li></span>
+              <span class="fragment"><li>builds on coroutines <span class="fragment">(not either/or)</span></li></span>
+            </ul>
+         </ul>
+         <aside class="notes">
+         <small>
+         Users can co_await senders. Perception that senders and receivers were a departure from coroutines.
+         </small>
+         </aside>
         </section>
 
         <section>
