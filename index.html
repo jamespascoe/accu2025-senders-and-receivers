@@ -56,7 +56,40 @@
           </aside>
         </section>
 
+        <section>
+          <h3 style="color:yellow">Senders and Receivers</h3>
+          <ul>
+            <span class="fragment"><li>Standardised asynchronous programming</li></span>
+            <ul>
+              <span class="fragment"><li><font style="color:yellow">Composability</font> between libraries</li></span>
+              <span class="fragment"><li>network
+                  <span class="fragment"> &#x2192; thread pool</span>
+                  <span class="fragment"> &#x2192; embedded io</span></li>
+              </span>
+              <span class="fragment"><li>no 'glue' code</li></span>
+              <span class="fragment"><li>builds on coroutines <span class="fragment">(not either/or)</span></li></span>
+            </ul>
+         </ul>
+         <aside class="notes">
+         <small>
+         Users can co_await senders. Perception that senders and receivers were a departure from coroutines.
+         </small>
+         </aside>
+        </section>
 
+    <!--
+      - Poll
+      + Intro slide
+      - Code 1
+      - Code 2
+      - Code 3
+      - Building
+      - Adaptors
+      - Coroutines
+      - References
+      - Conclusions
+      + Questions
+    -->
 
         <section data-menu-title="Sender Example">
           <h2><a href="https://github.com/jamespascoe/accu2025-example-code/blob/master/senders_and_receivers_timer_example.cpp">ASIO Timer: Sender</a></h2>
@@ -144,27 +177,6 @@ int main() {
           <small>
           </small>
           </aside>
-        </section>
-
-        <section>
-          <h3 style="color:yellow">Senders and Receivers</h3>
-          <ul>
-            <span class="fragment"><li>Standardised asynchronous programming</li></span>
-            <ul>
-              <span class="fragment"><li><font style="color:yellow">Composability</font> between libraries</li></span>
-              <span class="fragment"><li>network
-                  <span class="fragment"> &#x2192; thread pool</span>
-                  <span class="fragment"> &#x2192; embedded io</span></li>
-              </span>
-              <span class="fragment"><li>no 'glue' code</li></span>
-              <span class="fragment"><li>builds on coroutines <span class="fragment">(not either/or)</span></li></span>
-            </ul>
-         </ul>
-         <aside class="notes">
-         <small>
-         Users can co_await senders. Perception that senders and receivers were a departure from coroutines.
-         </small>
-         </aside>
         </section>
 
         <section>
