@@ -56,6 +56,16 @@
           </aside>
         </section>
 
+        <section data-menu-title="Poll: Senders and Receivers">
+          <h3 style="color:yellow">How familiar are you with Senders and Receivers?</h3>
+            <ol>
+              <span class="fragment"><li>I am a sender/receiver expert</li></span>
+              <span class="fragment"><li>I have a strong grasp but need to fill in some details</li></span>
+              <span class="fragment"><li>I have some understanding but finding it complex</li></span>
+              <span class="fragment"><li>I am just starting to learn about them</li></span>
+            </ol>
+        </section>
+
         <section>
           <h3 style="color:yellow">Senders and Receivers</h3>
           <ul>
@@ -78,12 +88,12 @@
         </section>
 
     <!--
-      - Poll
+      + Poll
       + Intro slide
-      - Code 1
-      - Code 2
-      - Code 3
-      - Building
+      + Code 1
+      + Code 2
+      + Code 3
+      + Building
       - Adaptors
       - Coroutines
       - References
@@ -93,7 +103,7 @@
 
         <section data-menu-title="Sender Example">
           <h2><a href="https://github.com/jamespascoe/accu2025-example-code/blob/master/senders_and_receivers_timer_example.cpp">ASIO Timer: Sender</a></h2>
-          <pre class="stretch"><code class="c++" data-trim data-line-numbers="">
+          <pre class="stretch"><code class="c++" data-trim data-line-numbers="|2|4-7|9-17|19-20|">
 struct timer_sender {
   using sender_concept = stdexec::sender_t;
 
@@ -103,17 +113,17 @@ struct timer_sender {
       stdexec::set_error_t(int)&gt;
 
   STDEXEC_MEMFN_DECL(auto connect)(this timer_sender self,
-      stdexec::receiver auto rcvr) {
+    stdexec::receiver auto rcvr) {
 
     asio::steady_timer timer(
-      self.io, asio::chrono::seconds(self.num_secs));
+      self.io, asio::chrono::seconds(self.n_secs));
 
-    return timer_operation{
-      self.io, self.num_secs, std::move(timer), std::move(rcvr)};
+    return timer_op{
+      self.io, self.n_secs, std::move(timer), std::move(rcvr)};
   };
 
   asio::io_context& io;
-  int num_secs;
+  int n_secs;
 };
           </code></pre>
           <aside class="notes">
@@ -124,18 +134,18 @@ struct timer_sender {
 
         <section data-menu-title="Receiver Example">
           <h2><a href="https://github.com/jamespascoe/accu2025-example-code/blob/master/senders_and_receivers_timer_example.cpp">ASIO Timer: Receiver</a></h2>
-          <pre class="r-stretch"><code class="c++" data-trim data-line-numbers="">
+          <pre class="r-stretch"><code class="c++" data-trim data-line-numbers="|3-6|8-17|19-27|">
 template &ltclass Receiver&gt
-struct timer_operation {
+struct timer_op {
   asio::io_context& io;
-  int num_secs;
+  int n_secs;
   asio::steady_timer timer;
   Receiver rcvr;
 
   static void callback(const boost::system::error_code& error,
-    int num_secs, Receiver& rcvr)
+    int n_secs, Receiver& rcvr)
   {
-    std::printf("Finished timer for %d seconds\n", num_secs);
+    std::printf("Finished timer for %d seconds\n", n_secs);
 
     if (error != boost::system::errc::success)
       stdexec::set_error(std::move(rcvr), error);
@@ -143,12 +153,13 @@ struct timer_operation {
       stdexec::set_value(std::move(rcvr), 0);
   }
 
-  STDEXEC_MEMFN_DECL(void start)(this timer_operation& self) noexcept
+  STDEXEC_MEMFN_DECL(void start)(this timer_op& self) noexcept
   {
     self.timer.async_wait(
       boost::bind(callback, boost::asio::placeholders::error,
-      self.num_secs, self.rcvr)
+      self.n_secs, self.rcvr)
     );
+
     self.io.run();
   }
 };
@@ -161,17 +172,60 @@ struct timer_operation {
 
         <section data-menu-title="Main Code">
           <h2><a href="https://github.com/jamespascoe/accu2025-example-code/blob/master/senders_and_receivers_timer_example.cpp">ASIO Timer: Main Code</a></h2>
-          <pre><code class="c++" data-trim data-line-numbers="">
-timer_sender async_timer(asio::io_context\& io, int num_secs) {
-  return {io, num_secs};
+          <pre><code class="c++" data-trim data-line-numbers="|5-10|6|8|1-3|9|">
+timer_sender async_timer(asio::io_context& io, int n_secs) {
+  return {io, n_secs};
 }
 
 int main() {
-
   asio::io_context io;
+
   auto task_timer = async_timer(io, 5);
   auto ret = stdexec::sync_wait(task_timer).value();
 }
+          </code></pre>
+          <aside class="notes">
+          <small>
+          </small>
+          </aside>
+        </section>
+
+        <section data-menu-title="CMake Code">
+          <h2><a href="https://github.com/jamespascoe/accu2025-example-code/blob/master/CMakeLists.txt">ASIO Timer: CMake</a></h2>
+          <pre class="r-stretch"><code class="c++" data-trim data-line-numbers="|1|3|9-17|19|21-33|">
+cmake_minimum_required(VERSION 3.25)
+
+set (CMAKE_CXX_STANDARD 20)
+
+project(ACCU2025)
+
+list(APPEND CMAKE_MODULE_PATH "${CMAKE_CURRENT_SOURCE_DIR}/cmake")
+
+# Use the CMake Package Manager
+include(CPM)
+
+# Download stdexec
+CPMAddPackage(
+  NAME stdexec
+  GITHUB_REPOSITORY NVIDIA/stdexec
+  GIT_TAG main
+)
+
+set (STDEXEC_BUILD_TESTS OFF)
+
+set(THREADS_PREFER_PTHREAD_FLAG ON)
+find_package(Threads REQUIRED)
+find_package(Boost)
+
+if(Boost_FOUND)
+    include_directories(${Boost_INCLUDE_DIRS})
+
+    add_executable(timer_example sender_and_receivers_timer.cpp)
+
+    target_link_libraries(timer_example STDEXEC::stdexec)
+    target_link_libraries(timer_example Threads::Threads)
+    target_link_libraries(timer_example ${Boost_LIBRARIES})
+endif()
           </code></pre>
           <aside class="notes">
           <small>
