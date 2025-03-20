@@ -145,7 +145,7 @@ struct timer_op {
   static void callback(const boost::system::error_code& error,
     int n_secs, Receiver& rcvr)
   {
-    std::printf("Finished timer for %d seconds\n", n_secs);
+    std::printf("Finished %d second timer\n", n_secs);
 
     if (error != boost::system::errc::success)
       stdexec::set_error(std::move(rcvr), error);
@@ -172,7 +172,7 @@ struct timer_op {
 
         <section data-menu-title="Main Code">
           <h2><a href="https://github.com/jamespascoe/accu2025-example-code/blob/master/senders_and_receivers_timer_example.cpp">ASIO Timer: Main Code</a></h2>
-          <pre><code class="c++" data-trim data-line-numbers="|5-10|6|8|1-3|9|">
+          <pre><code class="c++" data-trim data-line-numbers="|5-14|6|8|9-12|13|">
 timer_sender async_timer(asio::io_context& io, int n_secs) {
   return {io, n_secs};
 }
@@ -181,7 +181,11 @@ int main() {
   asio::io_context io;
 
   auto task_timer = async_timer(io, 5);
-  auto ret = stdexec::sync_wait(task_timer).value();
+  auto print_ret_val = stdexec::then(task_timer, [](int n)
+  {
+    std::printf("Return value: %d\n", n);
+  });
+  auto ret = stdexec::sync_wait(print_ret_val).value();
 }
           </code></pre>
           <aside class="notes">
@@ -192,7 +196,7 @@ int main() {
 
         <section data-menu-title="CMake Code">
           <h2><a href="https://github.com/jamespascoe/accu2025-example-code/blob/master/CMakeLists.txt">ASIO Timer: CMake</a></h2>
-          <pre class="r-stretch"><code class="c++" data-trim data-line-numbers="|1|3|9-17|19|21-33|">
+          <pre class="r-stretch"><code class="c++" data-trim data-line-numbers="|1|3|9-17|19|21-35|">
 cmake_minimum_required(VERSION 3.25)
 
 set (CMAKE_CXX_STANDARD 20)
@@ -220,6 +224,8 @@ find_package(Boost)
 if(Boost_FOUND)
     include_directories(${Boost_INCLUDE_DIRS})
 
+    add_compile_options(-Wno-deprecated-declarations)
+
     add_executable(timer_example sender_and_receivers_timer.cpp)
 
     target_link_libraries(timer_example STDEXEC::stdexec)
@@ -233,14 +239,21 @@ endif()
           </aside>
         </section>
 
+        <section id="Adaptors">
+          <h2>Adaptors</h2>
+            <ul>
+              <span class="fragment"><li>Eric Neibler: <a href="https://ericniebler.com/2024/02/04/what-are-senders-good-for-anyway/">What are senders good for, Anyway?</a></li></span>
+           </ul>
+        </section>
+
         <section id="references">
           <h2>References</h2>
             <ul>
-              <span class="fragment"><li>Eric Neibler: <a href="ericneibler.com/2024/02/04/what-are-senders-good-for-anyway">What are senders good for anyway?</a></li></span>
+              <span class="fragment"><li>Eric Neibler: <a href="https://ericniebler.com/2024/02/04/what-are-senders-good-for-anyway/">What are senders good for, Anyway?</a></li></span>
               <span class="fragment"><li>Lucian Radu Teodorescu: Overload <a href="https://accu.org/journals/overload/32/184/teodorescu/">Dec '24</a> & <a href="https://accu.org/journals/overload/33/185/teodorescu/">Feb '25</a></li></span>
               <span class="fragment"><li>Steve Downey: <a href="https://youtu.be/xXncLUD-4bA?si=0JBbEskGLnRFRjHI">CppNow 2023</a> talk</li></span>
               <span class="fragment"><li>Ben Deane: <a href="https://www.youtube.com/watch?v=eI5b-q4K9vo">CppNow 2024</a> (embedded) talk</li></span>
-              <span class="fragment"><li>Nvidia <a href="https://www.youtube.com/watch?v=eI5b-q4K9vo">std::exec</a> resources</li></span>
+              <span class="fragment"><li>Nvidia <a href="https://github.com/NVIDIA/stdexec">std::exec</a> resources</li></span>
            </ul>
         </section>
 
