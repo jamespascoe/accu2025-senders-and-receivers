@@ -30,7 +30,7 @@
         <section data-menu-title="Overview">
           <h2>Getting Started with<br>Senders and Receivers</h2>
             <p>
-            <h4>(A 20-Minute Survival Guide)</h4>
+            <h4>(A 20-Minute Introduction and Primer)</h4>
             <small>
               Jim (James) Pascoe<br>
               <a href="http://www.james-pascoe.com">http://www.james-pascoe.com</a><br>
@@ -94,7 +94,7 @@
       + Code 2
       + Code 3
       + Building
-      - Adaptors
+      + Adaptors
       - Coroutines
       + References
       - Conclusions
@@ -242,7 +242,14 @@ endif()
         <section id="Adaptors">
           <h2>Adaptors</h2>
             <ul>
-              <span class="fragment"><li>Eric Neibler: <a href="https://ericniebler.com/2024/02/04/what-are-senders-good-for-anyway/">What are senders good for, Anyway?</a></li></span>
+              <span class="fragment"><li>Modifies the task graph<span class="fragment"> (but does not start work)</span></li></span>
+              <ul>
+              <span class="fragment"><li><font style="color:yellow">then</font>: input sender &#x2192; function</li></span>
+              <span class="fragment"><li><font style="color:yellow">continues_on</font>: change execution resource</li></span>
+              <span class="fragment"><li><font style="color:yellow">bulk</font>: invokes a function on a range</li></span>
+              </ul>
+              <span class="fragment"><li>Most adaptors are pipeable: <font style="color:yellow">|</font></li></span>
+              <span class="fragment"><li><a href="https://en.cppreference.com/w/cpp/execution">cppreference</a> and <a href="https://github.com/NVIDIA/stdexec">std::exec examples</a></li></span>
            </ul>
         </section>
 
