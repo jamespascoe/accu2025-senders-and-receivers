@@ -120,12 +120,14 @@ struct timer_sender {
           This line declares how the sender can complete, and this is done with a list of callbacks. In
           this case, we are declaring that the function can complete sucessfully, in which case we return
           an int, and also it can complete in error (also with an int). There is a third callback type
-          declared with another function type called set_stopped_t, which relates to cancellation. And
-          that allows you to cancel in-flight or pending work, for example if a previous stage results
-          in error.
+          declared with another function type called set_stopped_t, which signals that the operation
+          completed without suceeding or failing. This result is used to indicate that the operation stopped
+          early typically becuase the result is no longer needed.
           <click>
           Ok, the connect member function. Connect takes a "receiver" and returns an operation state, which
-          is the result of connecting a sender and a receiver together. 
+          is the result of connecting a sender and a receiver together. In this case, connect is called
+          by stdexec when we start the operation and stdexec is responsible for ensuring that the opertion
+          state does not move and remains valid during the lifetime of the asynchronous operation.
           </small>
           </aside>
         </section>
@@ -164,6 +166,9 @@ struct timer_op {
           </code></pre>
           <aside class="notes">
           <small>
+          Receivers represent the continuation of an asynchronous operation and this is where the three
+          callbacks are demultiplexed. Start is where the asynchronous operation is actually triggerred
+          and it is at this point where the operation state is required to not move.
           </small>
           </aside>
         </section>
