@@ -89,7 +89,7 @@
 
         <section data-menu-title="Sender Example">
           <h2><a href="https://github.com/jamespascoe/accu2025-example-code/blob/master/senders_and_receivers_timer_example.cpp">ASIO Timer: Sender</a></h2>
-          <pre class="stretch"><code class="c++" data-trim data-line-numbers="|2|4-7|9-17|19-20|">
+          <pre class="stretch"><code class="c++" data-trim data-line-numbers="|2|4-7|9-17|">
 struct timer_sender {
   using sender_concept = stdexec::sender_t;
 
@@ -115,18 +115,19 @@ struct timer_sender {
           <aside class="notes">
           <small>
           This is a sender. Senders describe asynchronous operations or work, but they don't trigger it.
-          So, declaring a sender is
-          like declaring a callable so a function or a lambda. This is beneficial because it allows you
+          So, declaring a sender is like declaring a callable so a function or a lambda.
+          <br><click><br>
+          This line declares this type as a sender. This is beneficial because it allows you
           to create arbitraily complex task graphs, so multiple senders composed together with adaptors,
           before actually scheduling the execution on a resource.
-          <click>
+          <br><click><br>
           This line declares how the sender can complete, and this is done with a list of callbacks. In
           this case, we are declaring that the function can complete sucessfully, in which case we return
           an int, and also it can complete in error (also with an int). There is a third callback type
           declared with another function type called set_stopped_t, which signals that the operation
           completed without suceeding or failing. This result is used to indicate that the operation stopped
           early typically becuase the result is no longer needed.
-          <click>
+          <br><click><br>
           Ok, the connect member function. Connect takes a "receiver" and returns an operation state, which
           is the result of connecting a sender and a receiver together. In this case, connect is called
           by stdexec when we start the operation and stdexec is responsible for ensuring that the opertion
@@ -137,7 +138,7 @@ struct timer_sender {
 
         <section data-menu-title="Receiver Example">
           <h2><a href="https://github.com/jamespascoe/accu2025-example-code/blob/master/senders_and_receivers_timer_example.cpp">ASIO Timer: Receiver</a></h2>
-          <pre class="r-stretch"><code class="c++" data-trim data-line-numbers="|3-6|8-17|19-27|">
+          <pre class="r-stretch"><code class="c++" data-trim data-line-numbers="|8-17|19-27|">
 template &ltclass Receiver&gt
 struct timer_op {
   asio::io_context& io;
@@ -170,7 +171,8 @@ struct timer_op {
           <aside class="notes">
           <small>
           Receivers represent the continuation of an asynchronous operation and this is where the three
-          callbacks are demultiplexed. Start is where the asynchronous operation is actually triggerred
+          callbacks are demultiplexed.<p>
+          Start is where the asynchronous operation is actually triggerred
           and it is at this point where the operation state is required to not move.
           </small>
           </aside>
@@ -178,7 +180,7 @@ struct timer_op {
 
         <section data-menu-title="Main Code">
           <h2><a href="https://github.com/jamespascoe/accu2025-example-code/blob/master/senders_and_receivers_timer_example.cpp">ASIO Timer: Main Code</a></h2>
-          <pre><code class="c++" data-trim data-line-numbers="|1-3|5-14|6|8|9-12|14|">
+          <pre><code class="c++" data-trim data-line-numbers="|1-3|5-15|9-12|14|">
 timer_sender async_timer(asio::io_context& io, int n_secs) {
   return {io, n_secs};
 }
@@ -205,7 +207,7 @@ int main() {
 
         <section data-menu-title="CMake Code">
           <h2><a href="https://github.com/jamespascoe/accu2025-example-code/blob/master/CMakeLists.txt">ASIO Timer: CMake</a></h2>
-          <pre class="r-stretch"><code class="c++" data-trim data-line-numbers="|1|3|9-17|19|21-35|">
+          <pre class="r-stretch"><code class="c++" data-trim data-line-numbers="|1|9-17|19|21-35|">
 cmake_minimum_required(VERSION 3.25)
 
 set (CMAKE_CXX_STANDARD 20)
@@ -262,21 +264,20 @@ endif()
            </ul>
           <aside class="notes">
           Async. algorithms for common asynchronous patterns
-
+          <p>
           Sender adaptors are functions that return parent senders from one or more child senders plus a
           (possiby empty) set of additional arguments.
-
-          then is a chaining operation.
-
-          continues_on moves a sender onto a different scheduler (execution resource).
-
-          bulk takes an input sender, a integral and a callable, and then calls that callable for each index
-          in a range along with the values produced by the input sender. So you might have a sender that calculates
-          a coefficient and then you could use bulk to adapt that sender into a sender that performs a calculation
-          on each value stored in a vector, using that coefficient as input.
-
-          When I say 'pipeable', what I am actually saying is that the Bitwise OR operator is overloaded for the
-          purpose of creating sender chains.
+          <p>
+          <ul>
+            <li>then is a chaining operation</li>
+            <li>continues_on moves a sender onto a different scheduler (execution resource)</li>
+            <li>bulk takes an input sender, a integral and a callable, and then calls that callable for each index
+                in a range along with the values produced by the input sender. So you might have a sender that calculates
+                a coefficient and then you could use bulk to adapt that sender into a sender that performs a calculation
+                on each value stored in a vector, using that coefficient as input.</li>
+          </ul>
+          <p>
+          When I say 'pipeable', is that the Bitwise OR operator is overloaded for the purpose of creating sender chains.
           </aside>
         </section>
 
