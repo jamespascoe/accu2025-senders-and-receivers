@@ -77,7 +77,7 @@
                   <span class="fragment"> &#x2192; embedded io</span></li>
               </span>
               <span class="fragment"><li>no 'glue' code</li></span>
-              <span class="fragment"><li>builds on coroutines (not either/or)</li></span>
+              <span class="fragment"><li>complement coroutines (not either/or)</li></span>
             </ul>
          </ul>
          <aside class="notes">
@@ -115,21 +115,23 @@ struct timer_sender {
           <aside class="notes">
           <small>
           This is a sender. Senders describe asynchronous operations or work, but they don't trigger it.
-          So, declaring a sender is like declaring a callable so a function or a lambda.
+          So, declaring a sender is like declaring a callable so a function or a lambda. This is beneficial
+          because it allows you to create arbitraily complex task graphs, so multiple senders composed
+          together with adaptors, before actually scheduling the execution on a resource.
           <br><click><br>
-          This line declares this type as a sender. This is beneficial because it allows you
-          to create arbitraily complex task graphs, so multiple senders composed together with adaptors,
-          before actually scheduling the execution on a resource.
+          This line declares this type as a sender.
           <br><click><br>
           This line declares how the sender can complete, and this is done with a list of callbacks. In
-          this case, we are declaring that the function can complete sucessfully, in which case we return
+          this case, we are declaring that the sender can complete sucessfully, in which case we return
           an int, and also it can complete in error (also with an int). There is a third callback type
           declared with another function type called set_stopped_t, which signals that the operation
           completed without suceeding or failing. This result is used to indicate that the operation stopped
           early typically becuase the result is no longer needed.
           <br><click><br>
           This is the connect member function. Connect takes a "receiver" and returns an operation state, which
-          is the result of connecting a sender and a receiver together. In this case, connect is called
+          is the result of connecting a sender and a receiver together.
+          <p>
+          In this case, connect is called
           by stdexec when we start the operation and stdexec is responsible for ensuring that the opertion
           state does not move and remains valid during the lifetime of the asynchronous operation.
           </small>
