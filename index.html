@@ -128,7 +128,7 @@ struct timer_sender {
           completed without suceeding or failing. This result is used to indicate that the operation stopped
           early typically becuase the result is no longer needed.
           <br><click><br>
-          Ok, the connect member function. Connect takes a "receiver" and returns an operation state, which
+          This is the connect member function. Connect takes a "receiver" and returns an operation state, which
           is the result of connecting a sender and a receiver together. In this case, connect is called
           by stdexec when we start the operation and stdexec is responsible for ensuring that the opertion
           state does not move and remains valid during the lifetime of the asynchronous operation.
@@ -284,7 +284,7 @@ endif()
         <section id="Coroutines">
           <h2 style="color:yellow">Coroutines</h2>
             <ul>
-              <span class="fragment"><li>Senders and Receivers work with coroutines</li></span>
+              <span class="fragment"><li>Senders and Receivers work well with coroutines</li></span>
               <span class="fragment"><li>All awaitables (coroutines) are senders</li></span>
               <span class="fragment"><li><font style="color:yellow">task&lt&gt</font> type in <a href="https://github.com/NVIDIA/stdexec">std::exec</a> knows how to await senders</li></span>
               <span class="fragment"><li>You can co_await without having to do extra work</li></span>
